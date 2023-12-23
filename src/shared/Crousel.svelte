@@ -48,7 +48,6 @@
       style="background-image: url({card.image});"
       ><div class="logo">
         <p></p>
-        <!-- <img src="./images/logo.png" alt="" /> -->
       </div>
       <div class="title">{@html card.title}</div>
       <div class="icon">{card.icon}</div>
@@ -94,7 +93,7 @@
     }
   }
   .container {
-    height: 90vh;
+    height: 500px;
     display: flex;
     flex-wrap: nowrap;
     justify-content: start;
@@ -104,6 +103,7 @@
     width: 80px;
     border-radius: 0.75rem;
     background-size: cover;
+    /* background-position: center center; */
     overflow: hidden;
     border-radius: 2rem;
     margin: 0 10px;
@@ -118,7 +118,7 @@
     padding-left: 40px;
     padding-top: 40px;
     color: rgba(255, 255, 255, 0.9);
-    font-size: 70px;
+    font-size: 55px;
     font-weight: bold;
     /* give text shadow */
     text-shadow: 0px 0px 10px rgba(0, 0, 0, 1);
@@ -181,26 +181,26 @@
     input:checked + label {
       width: 60vw;
     }
-    .container {
-      height: 90vh;
-    }
 
     .title {
       font-size: 50px;
     }
   }
-  @keyframes flyIn {
-    from {
-      transform: translateX(-100%);
-      opacity: 0;
-    }
-    to {
-      transform: translateX(0);
-      opacity: 1;
-    }
-  }
 
   @media (max-width: 750px) {
+    @keyframes flyIn {
+      from {
+        transform: translateX(-100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+    .container {
+      height: 300px;
+    }
     input:checked + label {
       animation: flyIn 1s ease-out;
       width: 80vw;
@@ -211,6 +211,7 @@
     }
 
     .title {
+      font-size: 30px;
       padding-left: 20px;
     }
   }

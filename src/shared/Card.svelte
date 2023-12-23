@@ -5,7 +5,7 @@
   let text;
   onMount(() => {
     VanillaTilt.init(pre, {
-      max: 35,
+      max: 20,
       speed: 400,
     });
     pre.addEventListener("tiltChange", (event) => {

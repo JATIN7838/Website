@@ -124,7 +124,7 @@
   .slider {
     z-index: 1;
     width: 100%;
-    height: 100vh;
+    height: 550px;
     background: linear-gradient(-45deg, #d2001a, #7462ff, #f48e21, #23d5ab);
     animation: color 12s ease-in-out infinite;
     background-size: 300% 300%;
@@ -181,6 +181,11 @@
     .why {
       height: 800px;
       justify-content: space-between;
+    }
+  }
+  @media (max-width: 750px) {
+    .slider {
+      height: 400px;
     }
   }
   @media (max-width: 600px) {

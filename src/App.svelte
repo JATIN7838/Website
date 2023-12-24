@@ -2,7 +2,7 @@
   import Sidebar from "./components/Sidebar.svelte";
   import Home from "./components/Home.svelte";
   import Contact from "./components/Contact.svelte";
-  let currentTab = "Home";
+  let currentTab = "Contact";
   function changeTab(event) {
     currentTab = event.detail;
   }
@@ -17,7 +17,11 @@
       }}
     />
   {:else if currentTab == "Contact"}
-    <Contact />
+    <Contact
+      on:click={() => {
+        currentTab = "Home";
+      }}
+    />
   {/if}
 </main>
 

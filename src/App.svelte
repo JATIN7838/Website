@@ -2,7 +2,7 @@
   import Sidebar from "./components/Sidebar.svelte";
   import Home from "./components/Home.svelte";
   import Contact from "./components/Contact.svelte";
-  let currentTab = "Contact";
+  let currentTab = "Homes";
   function changeTab(event) {
     currentTab = event.detail;
   }

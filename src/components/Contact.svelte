@@ -77,7 +77,7 @@
       </form>
     </div>
   </div>
-  <div class="footer" class:tilt={$isOpen}>
+  <div class="footer">
     <h2>Copyright © 2023 Playyformee. All Rights Reserved.</h2>
   </div>
 </div>
@@ -130,7 +130,7 @@
   .content {
     z-index: 1;
     width: 100%;
-    height: 800px;
+    height: 700px;
     background-color: rgb(22, 24, 36);
     display: flex;
     flex-direction: column;
@@ -158,6 +158,14 @@
 
   .tilt {
     transform: perspective(1500px) rotateY(12deg) translateX(16vw); /* Default tilt for larger screens */
+  }
+  @media (min-height: 680px) {
+    .content {
+      height: 100vh;
+    }
+    .form {
+      top: 13%;
+    }
   }
 
   @media (max-width: 1000px) {

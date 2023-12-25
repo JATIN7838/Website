@@ -21,6 +21,7 @@
     "svelte-routing": "^2.10.0"
   },
   "dependencies": {
+    "firebase": "^10.7.1",
     "sirv-cli": "^2.0.0",
     "vanilla-tilt": "^1.8.1"
   }

@@ -62,6 +62,17 @@
           Contact
         </p>
       </li>
+      <li>
+        <p
+          class:current={currentTab === "Shows"}
+          id="Shows"
+          on:click={() => sendCurrentTab("Shows")}
+          on:keypress
+          class:navitem={currentTab != "Shows"}
+        >
+          Shows
+        </p>
+      </li>
     </ul>
   </nav>
 </aside>

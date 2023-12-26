@@ -1,6 +1,6 @@
 <script>
   import AgoraRTC from "agora-rtc-sdk-ng";
-
+  import { inShow } from "../store.js";
   let track;
   let audioTrack;
   let client;
@@ -22,6 +22,10 @@
     }
     track = await AgoraRTC.createCameraVideoTrack();
     track.play("camera-video");
+    if (isJoined) {
+      await client.publish(track);
+      isVideoPubed = true;
+    }
   }
 
   async function turnOnMicrophone() {
@@ -33,6 +37,11 @@
 
     audioTrack = await AgoraRTC.createMicrophoneAudioTrack();
     audioTrack.play();
+
+    if (isJoined) {
+      await client.publish(audioTrack);
+      isAudioPubed = true;
+    }
   }
 
   export let channel;
@@ -40,10 +49,6 @@
   export let token;
 
   async function joinChannel() {
-    if (isJoined) {
-      await leaveChannel();
-    }
-
     if (!client) {
       client = AgoraRTC.createClient({
         mode: "rtc",
@@ -62,8 +67,11 @@
     isJoined = false;
     isAudioPubed = false;
     isVideoPubed = false;
-
+    track && track.stop();
+    audioTrack && audioTrack.stop();
     client && (await client.leave());
+    //update inshow
+    inShow.update((n) => false);
   }
 
   async function onUserPublish(user, mediaType) {
@@ -78,30 +86,30 @@
       isAudioSubed = true;
     }
   }
+  joinChannel();
 
-  async function publishVideo() {
-    if (!isVideoOn) {
-      await turnOnCamera();
-    }
+  // async function publishVideo() {
+  //   if (!isVideoOn) {
+  //     await turnOnCamera();
+  //   }
 
-    if (!isJoined) {
-      await joinChannel();
-    }
-    await client.publish(track);
-    isVideoPubed = true;
-  }
+  //   if (!isJoined) {
+  //     await joinChannel();
+  //   }
+  //   await client.publish(track);
+  //   isVideoPubed = true;
+  // }
 
-  async function publishAudio() {
-    if (!isAudioOn) {
-      await turnOnMicrophone();
-    }
-    if (!isJoined) {
-      await joinChannel();
-    }
+  // async function publishAudio() {
+  //   if (!isAudioOn) {
+  //     await turnOnMicrophone();
+  //   }
+  //   if (!isJoined) {
+  //     await joinChannel();
+  //   }
 
-    await client.publish(audioTrack);
-    isAudioPubed = true;
-  }
+  //   isAudioPubed = true;
+  // }
 </script>
 
 <div class="left-side">
@@ -114,18 +122,14 @@
       Turn {isAudioOn ? "off" : "on"} Microphone
     </button>
   </div>
-  <h3>Please input the channel name</h3>
-  <input bind:value={channel} />
+
   <div class="buttons">
-    <button on:click={joinChannel} class={isJoined ? "button-on" : ""}>
-      Join Channel
-    </button>
-    <button on:click={publishVideo} class={isVideoPubed ? "button-on" : ""}>
+    <!-- <button on:click={publishVideo} class={isVideoPubed ? "button-on" : ""}>
       Publish Video
     </button>
     <button on:click={publishAudio} class={isAudioPubed ? "button-on" : ""}>
       Publish Audio
-    </button>
+    </button> -->
     <button on:click={leaveChannel}>Leave Channel</button>
   </div>
 </div>
@@ -139,7 +143,7 @@
 
   {#if isJoined && !isVideoSubed}
     <div class="waiting">
-      You can shared channel {channel} to others.....
+      In Show: {channel}
     </div>
   {/if}
 </div>

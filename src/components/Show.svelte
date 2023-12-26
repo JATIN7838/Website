@@ -8,6 +8,7 @@
     signOut,
   } from "firebase/auth";
   import Formpage from "./Formpage.svelte";
+  import { inShow } from "../store.js";
   const firebaseConfig = {
     apiKey: "AIzaSyCzqllCOCHckcus9vqGAJiGrITeWPyeHwo",
     authDomain: "play-for-me-427f0.firebaseapp.com",
@@ -55,7 +56,9 @@
 </script>
 
 <div class="container">
-  <h1>{text}</h1>
+  {#if !$inShow}
+    <h1>{text}</h1>
+  {/if}
   {#if !userSignedIn && text != "Access Denied"}
     <button
       on:click={() => {
@@ -64,11 +67,13 @@
     >
   {:else}
     <Formpage />
-    <button
-      on:click={() => {
-        signOutUser();
-      }}>Sign Out</button
-    >
+    {#if !$inShow}
+      <button
+        on:click={() => {
+          signOutUser();
+        }}>Sign Out</button
+      >
+    {/if}
   {/if}
 </div>
 

@@ -2,6 +2,7 @@
   import { createEventDispatcher } from "svelte";
   //import the store
   import { isOpen } from "../store.js";
+  import { inShow } from "../store.js";
   let dispatch = createEventDispatcher();
   export let currentTab = "Home";
   function toggleSidebar() {
@@ -24,14 +25,19 @@
   />
 </svelte:head>
 
-<button class="sidebar-btn" on:click={toggleSidebar} class:open={$isOpen}>
+<button
+  class="sidebar-btn"
+  on:click={toggleSidebar}
+  class:open={$isOpen}
+  class:hide={$inShow}
+>
   {#if !$isOpen}
     <i class="fa fa-bars" aria-hidden="true"></i>
   {:else}
     <i class="fa fa-arrow-left" aria-hidden="true"></i>
   {/if}
 </button>
-<aside class:open={$isOpen}>
+<aside class:open={$isOpen} class:hide={$inShow}>
   <nav>
     <div class="logo-container">
       <img class="logo" src="./images/logo.png" alt="Logo" />
@@ -76,7 +82,8 @@
     </ul>
   </nav>
 </aside>
-<div class="main-content"></div>
+
+<!-- <div class="main-content"></div> -->
 
 <style>
   p {
@@ -141,6 +148,12 @@
 
   aside.open {
     transform: translateX(0);
+  }
+  aside.hide {
+    display: none;
+  }
+  .sidebar-btn.hide {
+    display: none;
   }
 
   .navitem {

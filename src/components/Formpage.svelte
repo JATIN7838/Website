@@ -1,7 +1,8 @@
 <script>
   import Streampage from "./Streampage.svelte";
+  import { inShow } from "../store.js";
   const appId = "f4ba96e713644580be925491db5127a0";
-  const channel = "test";
+  let channel;
   let token; // Fetch this from your token server
 
   // Fetch the token from your server
@@ -25,14 +26,19 @@
     let resp = await response.json();
     //check token type
     token = resp.token;
+    inShow.update((n) => true);
+    channel = "";
   }
 </script>
 
 <div class="container">
-  {#if token}
+  {#if $inShow}
     <Streampage {appId} {channel} {token} />
   {:else}
-    <button on:click={fetchToken}> Join</button>
+    <h3>Please input the channel name</h3>
+    <br />
+    <input bind:value={channel} /><br />
+    <button on:click={fetchToken}>Join</button>
   {/if}
 </div>
 
@@ -40,6 +46,7 @@
   .container {
     display: flex;
     justify-content: center;
+    flex-direction: column;
     align-items: center;
     width: 100%;
     height: 100vh;

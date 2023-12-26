@@ -7,7 +7,7 @@
     signInWithRedirect,
     signOut,
   } from "firebase/auth";
-
+  import Formpage from "./Formpage.svelte";
   const firebaseConfig = {
     apiKey: "AIzaSyCzqllCOCHckcus9vqGAJiGrITeWPyeHwo",
     authDomain: "play-for-me-427f0.firebaseapp.com",
@@ -21,7 +21,6 @@
   const auth = getAuth(app);
   export let text;
   export let userSignedIn;
-
   const provider = new GoogleAuthProvider();
   const signInWithGoogle = async () => {
     try {
@@ -64,6 +63,7 @@
       }}>Google Sign In</button
     >
   {:else}
+    <Formpage />
     <button
       on:click={() => {
         signOutUser();

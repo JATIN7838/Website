@@ -21,6 +21,7 @@
   const db = getFirestore(app);
   let text = "Loading....";
   let userSignedIn = false;
+
   let isLoading = true;
   let currentTab;
   let unsubscribe;
@@ -30,7 +31,7 @@
 
   unsubscribe = onAuthStateChanged(auth, (user) => {
     if (user) {
-      const uid = user.uid;
+      let uid = user.uid;
       const docRef = doc(db, "users", uid);
       getDoc(docRef)
         .then((docSnap) => {

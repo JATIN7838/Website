@@ -19,10 +19,11 @@
 
     if (track) {
       return track.setEnabled(!track.enabled);
+    } else {
+      track = await AgoraRTC.createCameraVideoTrack();
+      track.play("camera-video");
     }
-    track = await AgoraRTC.createCameraVideoTrack();
-    track.play("camera-video");
-    if (isJoined) {
+    if (isJoined && !isVideoPubed) {
       await client.publish(track);
       isVideoPubed = true;
     }
@@ -33,12 +34,12 @@
 
     if (audioTrack) {
       return audioTrack.setEnabled(!audioTrack.enabled);
+    } else {
+      audioTrack = await AgoraRTC.createMicrophoneAudioTrack();
+      audioTrack.play();
     }
 
-    audioTrack = await AgoraRTC.createMicrophoneAudioTrack();
-    audioTrack.play();
-
-    if (isJoined) {
+    if (isJoined && !isAudioPubed) {
       await client.publish(audioTrack);
       isAudioPubed = true;
     }
@@ -64,14 +65,24 @@
   }
 
   async function leaveChannel() {
+    if (audioTrack) {
+      audioTrack.setEnabled(false);
+      audioTrack.stop();
+      audioTrack.close();
+    }
+    if (track) {
+      track.setEnabled(false);
+      track.stop();
+      track.close();
+    }
+    if (client) {
+      await client.leave();
+    }
+
     isJoined = false;
     isAudioPubed = false;
     isVideoPubed = false;
-    track && track.stop();
-    audioTrack && audioTrack.stop();
-    client && (await client.leave());
-    //update inshow
-    inShow.update((n) => false);
+    window.location.reload();
   }
 
   async function onUserPublish(user, mediaType) {
@@ -87,66 +98,46 @@
     }
   }
   joinChannel();
-
-  // async function publishVideo() {
-  //   if (!isVideoOn) {
-  //     await turnOnCamera();
-  //   }
-
-  //   if (!isJoined) {
-  //     await joinChannel();
-  //   }
-  //   await client.publish(track);
-  //   isVideoPubed = true;
-  // }
-
-  // async function publishAudio() {
-  //   if (!isAudioOn) {
-  //     await turnOnMicrophone();
-  //   }
-  //   if (!isJoined) {
-  //     await joinChannel();
-  //   }
-
-  //   isAudioPubed = true;
-  // }
 </script>
 
-<div class="left-side">
-  <h3>Pleat check you camera / microphone!</h3>
-  <div class="buttons">
-    <button on:click={turnOnCamera} class={isVideoOn ? "button-on" : ""}>
-      Turn {isVideoOn ? "off" : "on"} camera
-    </button>
-    <button on:click={turnOnMicrophone} class={isAudioOn ? "button-on" : ""}>
-      Turn {isAudioOn ? "off" : "on"} Microphone
-    </button>
-  </div>
-
-  <div class="buttons">
-    <!-- <button on:click={publishVideo} class={isVideoPubed ? "button-on" : ""}>
-      Publish Video
-    </button>
-    <button on:click={publishAudio} class={isAudioPubed ? "button-on" : ""}>
-      Publish Audio
-    </button> -->
-    <button on:click={leaveChannel}>Leave Channel</button>
-  </div>
-</div>
-<div class="right-side">
+<div class="video-area">
   <video id="camera-video">
     <track kind="captions" />
   </video>
   <video id="remote-video">
     <track kind="captions" />
   </video>
-
-  {#if isJoined && !isVideoSubed}
-    <div class="waiting">
-      In Show: {channel}
-    </div>
-  {/if}
+</div>
+<div class="button-area">
+  <button on:click={turnOnCamera} class={isVideoOn ? "button-on" : ""}>
+    Turn {isVideoOn ? "off" : "on"} camera
+  </button>
+  <button on:click={turnOnMicrophone} class={isAudioOn ? "button-on" : ""}>
+    Turn {isAudioOn ? "off" : "on"} Microphone
+  </button>
+  <button on:click={leaveChannel}>Leave Channel</button>
 </div>
 
 <style>
+  .video-area {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    width: 100%;
+    height: 500px;
+    background-color: rgb(22, 24, 36);
+  }
+  .video-area video {
+    width: 40%;
+    height: 100%;
+  }
+  .button-area {
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    width: 60%;
+    height: 100px;
+    background-color: rgb(22, 24, 36);
+  }
 </style>

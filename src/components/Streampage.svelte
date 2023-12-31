@@ -14,9 +14,18 @@
 
   async function turnOnCamera() {
     isVideoOn = !isVideoOn;
-
+    const videoElement = document.getElementById("camera-video");
     if (track) {
-      return track.setEnabled(!track.enabled);
+      await track.setEnabled(!track.enabled);
+      if (track.enabled) {
+        track.play("camera-video");
+      } else {
+        videoElement.pause();
+        videoElement.removeAttribute("src");
+        videoElement.load();
+        videoElement.poster = "noposter.jpg";
+        videoElement.style.objectFit = "contain";
+      }
     } else {
       track = await AgoraRTC.createCameraVideoTrack();
       track.play("camera-video");
@@ -53,10 +62,9 @@
         mode: "rtc",
         codec: "vp8",
       });
-
+      client.on("user-joined", onUserJoined);
       client.on("user-published", onUserPublish);
       client.on("user-unpublished", onUserUnpublish);
-
       client.on("user-left", (user) => {
         const videoContainer = document.getElementById(`${user.uid}-container`);
         if (videoContainer) {
@@ -94,50 +102,63 @@
     window.location.reload();
   }
 
+  async function onUserJoined(user) {
+    let videoContainer = document.getElementById(`${user.uid}-container`);
+
+    if (!videoContainer) {
+      videoContainer = document.createElement("div");
+      videoContainer.id = `${user.uid}-container`;
+      videoContainer.style.width = "100%";
+      videoContainer.style.height = "350px";
+      videoContainer.style.display = "flex";
+      videoContainer.style.justifyContent = "center";
+      videoContainer.style.alignItems = "center";
+      videoContainer.style.margin = "10px 0";
+      document.getElementById("remote-videos").appendChild(videoContainer);
+    }
+
+    let videoElement = document.getElementById(`${user.uid}-video`);
+
+    if (!videoElement) {
+      videoElement = document.createElement("video");
+      videoElement.id = `${user.uid}-video`;
+      videoElement.poster = "noposter.jpg";
+      videoElement.style.borderRadius = "20px";
+      videoElement.style.width = "98%";
+      videoElement.style.height = "100%";
+      videoContainer.appendChild(videoElement);
+    }
+  }
+
   async function onUserPublish(user, mediaType) {
     const remoteTrack = await client.subscribe(user, mediaType);
 
-    if (mediaType === "video") {
-      let videoContainer = document.getElementById(`${user.uid}-container`);
+    const existingUser = remoteUsers.find(
+      (remoteUser) => remoteUser.uid === user.uid
+    );
 
-      // If the videoContainer div doesn't exist, create a new one
-      if (!videoContainer) {
-        videoContainer = document.createElement("div");
-        videoContainer.id = `${user.uid}-container`;
-        videoContainer.style.width = "100%";
-        videoContainer.style.height = "400px";
-        videoContainer.style.display = "flex";
-        videoContainer.style.justifyContent = "center";
-        videoContainer.style.alignItems = "center";
-        videoContainer.style.margin = "10px 0";
-        document.getElementById("remote-videos").appendChild(videoContainer);
-      }
-
-      let videoElement = document.getElementById(`${user.uid}-video`);
-      if (!videoElement) {
-        videoElement = document.createElement("video");
-        videoElement.id = `${user.uid}-video`;
-        videoElement.style.borderRadius = "20px";
-        videoElement.style.width = "98%";
-        videoElement.style.height = "100%";
-        videoContainer.appendChild(videoElement);
-      }
-      // setTimeout(() => {
-      //   videoElement.style.objectFit = "contain";
-      // }, 100);
-
-      remoteTrack.play(videoElement);
-      videoElement.poster = "noposter.jpg";
-
+    if (existingUser) {
+      existingUser.mediaType = mediaType;
+    } else {
       remoteUsers = [
         ...remoteUsers,
         { uid: user.uid, track: remoteTrack, mediaType: mediaType },
       ];
     }
+
+    if (mediaType === "video") {
+      let videoElement = document.getElementById(`${user.uid}-video`);
+      if (videoElement) {
+        remoteTrack.play(videoElement);
+        videoElement.style.objectFit = "contain";
+        videoElement.poster = "noposter.jpg";
+      }
+    }
     if (mediaType === "audio") {
       remoteTrack.play();
     }
   }
+
   async function onUserUnpublish(user) {
     const videoElement = document.getElementById(`${user.uid}-video`);
     if (videoElement) {
@@ -146,6 +167,13 @@
       videoElement.load(); // Load the video element
       videoElement.poster = "noposter.jpg"; //
     }
+    const existingUser = remoteUsers.find(
+      (remoteUser) => remoteUser.uid === user.uid
+    );
+
+    if (existingUser) {
+      existingUser.mediaType = null;
+    }
   }
 
   joinChannel();
@@ -153,7 +181,7 @@
 
 <div class="video-area">
   <div id="local-video">
-    <video id="camera-video">
+    <video id="camera-video" poster="noposter.jpg">
       <track kind="captions" />
     </video>
   </div>
@@ -172,7 +200,7 @@
 <style>
   .video-area {
     display: flex;
-    height: 90vh;
+    height: 85vh;
     width: 100%;
     justify-content: space-evenly;
     margin: 10px 0;
@@ -181,6 +209,7 @@
   #local-video {
     width: 45%;
     border: 2px solid #ccc;
+    padding: 4px;
     border-radius: 20px;
   }
 

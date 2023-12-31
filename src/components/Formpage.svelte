@@ -8,6 +8,7 @@
   let text = "Please input channel name";
 
   async function fetchToken() {
+    inShow.update(() => true);
     if (channel == "") {
       text = "Invalid channel";
       return;
@@ -32,7 +33,6 @@
     let resp = await response.json();
     isLoading = false;
     token = resp.token;
-    inShow.update(() => true);
   }
 </script>
 

@@ -185,6 +185,13 @@
   ></script>
 </svelte:head>
 
+<svelte:head>
+  <script
+    src="https://kit.fontawesome.com/0df4c92ac2.js"
+    crossorigin="anonymous"
+  ></script>
+</svelte:head>
+
 <div class="video-area">
   <div id="local-video">
     <video id="camera-video" poster="noposter.jpg">

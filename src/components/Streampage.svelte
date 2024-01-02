@@ -203,9 +203,20 @@
         ? "fa-solid fa-microphone-slash"
         : "fa-solid fa-microphone"}
     ></i>
-  </button>
-  <button on:click={leaveChannel}>
-    <i class="fa-solid fa-arrow-right-from-bracket"></i>
+    <button on:click={turnOnCamera}>
+      <i class={!isVideoOn ? "fa-solid fa-video-slash" : "fa-solid fa-video"}
+      ></i>
+    </button>
+    <button on:click={turnOnMicrophone}>
+      <i
+        class={!isAudioOn
+          ? "fa-solid fa-microphone-slash"
+          : "fa-solid fa-microphone"}
+      ></i>
+    </button>
+    <button on:click={leaveChannel}>
+      <i class="fa-solid fa-arrow-right-from-bracket"></i>
+    </button>
   </button>
 </div>
 

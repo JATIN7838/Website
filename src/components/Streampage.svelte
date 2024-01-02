@@ -43,7 +43,6 @@
       return audioTrack.setEnabled(!audioTrack.enabled);
     } else {
       audioTrack = await AgoraRTC.createMicrophoneAudioTrack();
-      audioTrack.play();
     }
 
     if (isJoined && !isAudioPubed) {
@@ -179,6 +178,13 @@
   joinChannel();
 </script>
 
+<svelte:head>
+  <script
+    src="https://kit.fontawesome.com/0df4c92ac2.js"
+    crossorigin="anonymous"
+  ></script>
+</svelte:head>
+
 <div class="video-area">
   <div id="local-video">
     <video id="camera-video" poster="noposter.jpg">
@@ -188,16 +194,30 @@
   <div id="remote-videos"></div>
 </div>
 <div class="button-area">
-  <button on:click={turnOnCamera} class={isVideoOn ? "button-on" : ""}>
-    Turn {isVideoOn ? "off" : "on"} camera
+  <button on:click={turnOnCamera}>
+    <i class={!isVideoOn ? "fa-solid fa-video-slash" : "fa-solid fa-video"}></i>
   </button>
-  <button on:click={turnOnMicrophone} class={isAudioOn ? "button-on" : ""}>
-    Turn {isAudioOn ? "off" : "on"} Microphone
+  <button on:click={turnOnMicrophone}>
+    <i
+      class={!isAudioOn
+        ? "fa-solid fa-microphone-slash"
+        : "fa-solid fa-microphone"}
+    ></i>
   </button>
-  <button on:click={leaveChannel}>Leave Channel</button>
+  <button on:click={leaveChannel}>
+    <i class="fa-solid fa-arrow-right-from-bracket"></i>
+  </button>
 </div>
 
 <style>
+  button {
+    border-radius: 50%;
+    height: 50px;
+    width: 50px;
+  }
+  button i {
+    font-size: 25px;
+  }
   .video-area {
     display: flex;
     height: 85vh;
